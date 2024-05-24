@@ -6,6 +6,7 @@ import { useParams } from "react-router-dom";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
 import { useQuery } from "@tanstack/react-query";
 import LoadingSpinner from "../../components/Shared/LoadingSpinner";
+import { DateRange } from "react-date-range";
 
 const RoomDetails = () => {
   const { id } = useParams();
@@ -18,8 +19,6 @@ const RoomDetails = () => {
       return data;
     },
   });
-
-  console.log(room);
 
   if (isLoading) return <LoadingSpinner />;
 

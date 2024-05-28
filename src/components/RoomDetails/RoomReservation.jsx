@@ -2,14 +2,19 @@ import PropTypes from "prop-types";
 import Button from "../Shared/Button/Button";
 import { DateRange } from "react-date-range";
 import { useState } from "react";
+import { differenceInCalendarDays } from "date-fns";
 const RoomReservation = ({ room }) => {
   const [state, setState] = useState([
     {
-      startDate: new Date(),
-      endDate: null,
+      startDate: new Date(room.from),
+      endDate: new Date(room.to),
       key: "selection",
     },
   ]);
+
+  const Totalprice =
+    differenceInCalendarDays(new Date(room.to), new Date(room.from)) *
+    room?.price;
 
   return (
     <div className="rounded-xl border-[1px] border-neutral-200 overflow-hidden bg-white">
@@ -22,8 +27,15 @@ const RoomReservation = ({ room }) => {
         <DateRange
           showDateDisplay={false}
           rangeColors={["#F6536D"]}
-          editableDateInputs={true}
-          onChange={(item) => setState([item.selection])}
+          onChange={(item) =>
+            setState([
+              {
+                startDate: new Date(room.from),
+                endDate: new Date(room.to),
+                key: "selection",
+              },
+            ])
+          }
           moveRangeOnFirstSelection={false}
           ranges={state}
         />
@@ -35,7 +47,7 @@ const RoomReservation = ({ room }) => {
       <hr />
       <div className="p-4 flex items-center justify-between font-semibold text-lg">
         <div>Total</div>
-        <div>${room?.price}</div>
+        <div>${Totalprice}</div>
       </div>
     </div>
   );

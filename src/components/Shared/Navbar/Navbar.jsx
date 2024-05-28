@@ -4,10 +4,38 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import useAuth from "../../../hooks/useAuth";
 import avatarImg from "../../../assets/images/placeholder.jpg";
-
+import HostModal from "../../../Modal/HostModal";
+import useAxiosSecure from "../../../hooks/useAxiosSecure";
+import toast from "react-hot-toast";
 const Navbar = () => {
   const { user, logOut } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
+  const [modelOpen, setmodelOpen] = useState(false);
+  const axiosSecure = useAxiosSecure();
+  const closeModal = () => {
+    setmodelOpen(false);
+  };
+
+  const modalHandler = async () => {
+    try {
+      const currentUser = {
+        email: user?.email,
+        role: "guest",
+        status: "Requested",
+      };
+      const { data } = await axiosSecure.put("/users", currentUser);
+      console.log(data);
+      if (data.modifiedCount > 0) {
+        toast.success("Success! Please wait for admin confirmation");
+      } else {
+        toast.success("Please!, Wait for admin approval👊");
+      }
+      closeModal();
+    } catch (err) {
+      toast.error(err.message);
+      closeModal();
+    }
+  };
 
   return (
     <div className="fixed w-full bg-white z-10 shadow-sm">
@@ -29,15 +57,19 @@ const Navbar = () => {
               <div className="flex flex-row items-center gap-3">
                 {/* Become A Host btn */}
                 <div className="hidden md:block">
-                  {!user && (
-                    <button
-                      disabled={!user}
-                      className="disabled:cursor-not-allowed cursor-pointer hover:bg-neutral-100 py-3 px-4 text-sm font-semibold rounded-full  transition"
-                    >
-                      Host your home
-                    </button>
-                  )}
+                  <button
+                    onClick={() => setmodelOpen(true)}
+                    disabled={!user}
+                    className="disabled:cursor-not-allowed cursor-pointer hover:bg-neutral-100 py-3 px-4 text-sm font-semibold rounded-full  transition"
+                  >
+                    Host your home
+                  </button>
                 </div>
+                <HostModal
+                  isOpen={modelOpen}
+                  closeModal={closeModal}
+                  modalHandler={modalHandler}
+                />
                 {/* Dropdown btn */}
                 <div
                   onClick={() => setIsOpen(!isOpen)}

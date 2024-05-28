@@ -6,10 +6,14 @@ import useAuth from "../../../hooks/useAuth";
 import LoadingSpinner from "../../../components/Shared/LoadingSpinner";
 
 const MyListings = () => {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const axiosSecure = useAxiosSecure();
 
-  const { data: rooms = [], isLoading } = useQuery({
+  const {
+    data: rooms = [],
+    isLoading,
+    refetch,
+  } = useQuery({
     queryKey: ["rooms", user?.email],
     queryFn: async () => {
       const { data } = await axiosSecure.get(`/my-listings/${user?.email}`);
@@ -17,7 +21,7 @@ const MyListings = () => {
     },
   });
 
-  if (isLoading) return <LoadingSpinner />;
+  if (isLoading || loading) return <LoadingSpinner />;
   return (
     <>
       <Helmet>
@@ -76,7 +80,9 @@ const MyListings = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  <RoomDataRow />
+                  {rooms.map((room) => (
+                    <RoomDataRow key={room._id} room={room} refetch={refetch} />
+                  ))}
                 </tbody>
               </table>
             </div>

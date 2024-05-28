@@ -12,13 +12,14 @@ import useAuth from "../../../hooks/useAuth";
 import { Link } from "react-router-dom";
 import MenuItem from "./Menu/MenuItems.jsx";
 import useRole from "../../../hooks/useRole.js";
+import AdminMenu from "./Menu/AdminMenu.jsx";
+import HostMenu from "./Menu/HostMenu.jsx";
+import GuestMenu from "./Menu/GuestMenu.jsx";
 
 const Sidebar = () => {
   const { logOut } = useAuth();
   const [isActive, setActive] = useState(false);
   const [role, isLoading] = useRole();
-
-  console.log(role, isLoading);
   // Sidebar Responsive Handler
   const handleToggle = () => {
     setActive(!isActive);
@@ -82,34 +83,10 @@ const Sidebar = () => {
                 icon={BsGraphUp}
                 address="/dashboard"
               />
-              <MenuItem
-                icon={BsFingerprint}
-                label="My Bookings"
-                address="my-bookings"
-              />
-              {/* Add Room */}
-              <MenuItem
-                label="Add Room"
-                icon={BsFillHouseAddFill}
-                address="add-room"
-              />
-
               {/* My Listing */}
-              <MenuItem
-                label="My Listings"
-                icon={MdHomeWork}
-                address="my-listings"
-              />
-              <MenuItem
-                icon={MdOutlineManageHistory}
-                label="Manage Bookings"
-                address="manage-bookings"
-              />
-              <MenuItem
-                icon={FaUserCog}
-                label="Manage Users"
-                address="manage-users"
-              />
+              <AdminMenu />
+              {role === "guest" && <GuestMenu />}
+              {role === "host" && <HostMenu />}
             </nav>
           </div>
         </div>
